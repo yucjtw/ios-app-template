@@ -20,12 +20,16 @@ if [[ -z "$NEW_NAME" || -z "$NEW_PREFIX" ]]; then
   echo "   eg: $0 MyApp com.mycompany" >&2
   exit 1
 fi
-if [[ ! "$NEW_NAME" =~ ^[A-Za-z][A-Za-z0-9]*$ ]]; then
-  echo "error: app name must be a valid Swift identifier (letters and digits, no spaces or dashes): $NEW_NAME" >&2
+if [[ ! "$NEW_NAME" =~ ^[A-Z][A-Za-z0-9]*$ ]]; then
+  echo "error: app name must be UpperCamelCase letters and digits, starting with a letter (it becomes the Swift module name and the .app name): $NEW_NAME" >&2
   exit 1
 fi
-if [[ ! "$NEW_PREFIX" =~ ^[A-Za-z0-9.-]+$ ]]; then
-  echo "error: bundle id prefix must look like com.company: $NEW_PREFIX" >&2
+if [[ ! "$NEW_PREFIX" =~ ^[a-z0-9-]+(\.[a-z0-9-]+)+$ ]]; then
+  echo "error: bundle id prefix must be lowercase reverse-DNS with at least two segments (letters, digits, hyphens, dots), eg com.mycompany: $NEW_PREFIX" >&2
+  exit 1
+fi
+if [[ "$NEW_PREFIX" == "$OLD_PREFIX" ]]; then
+  echo "error: $OLD_PREFIX is a placeholder and cannot be registered in App Store Connect; use a domain you control" >&2
   exit 1
 fi
 
